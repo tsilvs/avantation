@@ -1,13 +1,13 @@
 {
-    "name": "avantation",
-    "description": "Build OpenAPI3.0 specification from HAR",
-    "version": "2.0.5",
-    "author": "Anbarasan K <anbuksv@gmail.com> (https://www.avantation.in)",
+    "name": "@willh/avantation",
+    "description": "Build OpenAPI 3.1 specification from HAR",
+    "version": "2.1.0",
+    "author": "Will 保哥 <doggy.huang@gmail.com>",
     "bin": {
         "avantation": "./bin/run"
     },
     "man": "./man/avantation.1",
-    "bugs": "https://github.com/anbuksv/avantation/issues",
+    "bugs": "https://github.com/doggy8088/avantation/issues",
     "dependencies": {
         "@oclif/command": "^1.5.6",
         "@oclif/config": "^1.9.0",
@@ -37,7 +37,7 @@
         "/lib",
         "/man"
     ],
-    "homepage": "https://github.com/anbuksv/avantation",
+    "homepage": "https://github.com/doggy8088/avantation",
     "keywords": [
         "oclif",
         "avantation",
