@@ -10,7 +10,7 @@ import { colors as Color } from './logger';
 
 const HTTPSnippet: any = require('httpsnippet');
 var URL: any = require('url-parse');
-const YAML: any = require('json2yaml');
+const YAML: any = require('yamljs');
 
 export class AvantationAPI implements Avantation.InputConfig {
     har: HAR.Final;
@@ -98,13 +98,22 @@ export class AvantationAPI implements Avantation.InputConfig {
         let security: OAS.SecurityRequirementObject = this.buildSecurity(entry.request.headers);
         let pathItemInfo: Avantation.PathItemInfo = this.buildTag(entry.comment, path.tag);
         let operationItem: OAS.OperationObject = {
-            security: Object.keys(security).length > 0 ? [security] : [],
+            // security: Object.keys(security).length > 0 ? [security] : [],
+            operationId: entry.request.method.toLocaleLowerCase() + turnPathIntoCamcelCase(path.value),
             tags: [pathItemInfo.tag],
             summary: pathItemInfo.comment || pathItemInfo.tag,
             parameters: [...path.params, ...uniqueQueryParams.values()],
             requestBody: requestBody,
             responses: response
         };
+
+        function turnPathIntoCamcelCase(pathValue: string): string {
+            let parts = pathValue.split('/');
+            let camelCaseParts = parts.map((part, index) => {
+                return index === 0 ? part.toLowerCase() : part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+            });
+            return camelCaseParts.join('');
+        }
 
         if (this['http-snippet']) {
             operationItem['x-code-samples'] = this.generateSampleCodes(entry.request);
@@ -268,19 +277,21 @@ export class AvantationAPI implements Avantation.InputConfig {
     buildFormData(postData: HAR.PostData): any {
         if (postData.params !== undefined && postData.params.length !== 0) {
             let properties: any = {};
-            let required: any = postData.params.map(function (query: HAR.NameValue) {
-                if (query.value == '' || query.value == '(binary)') {
+            let required: any = postData.params
+                .filter((query: HAR.NameValue) => !query.name.startsWith('@'))
+                .map((query: HAR.NameValue) => {
+                    if (query.value == '' || query.value == '(binary)') {
+                        properties[query.name] = {
+                            type: 'string',
+                            format: 'binary'
+                        };
+                        return query.name;
+                    }
                     properties[query.name] = {
-                        type: 'string',
-                        format: 'binary'
+                        type: 'string'
                     };
                     return query.name;
-                }
-                properties[query.name] = {
-                    type: 'string'
-                };
-                return query.name;
-            });
+                });
             return {
                 type: 'object',
                 properties: properties,
@@ -291,18 +302,7 @@ export class AvantationAPI implements Avantation.InputConfig {
     }
 
     buildResponse(res: HAR.HarResponse): OAS.Response {
-        let response: OAS.Response = {
-            default: {
-                description: 'Unexpected error',
-                content: {
-                    ['application/json']: {
-                        example: {
-                            message: 'Sorry unable to perform operation.'
-                        }
-                    }
-                }
-            }
-        };
+        let response: OAS.Response = {};
 
         if (!res.content.text || !res.content.mimeType.includes('application/json')) return response;
 
@@ -316,7 +316,20 @@ export class AvantationAPI implements Avantation.InputConfig {
         } else {
             Util.arrayMaxDepth(responseData, 3);
         }
-        let responObject: OAS.ReponsesObject = {
+
+        // Remove properties with names starting with '@'
+        function removePropertiesWithAtPrefix(obj: any) {
+            for (let prop in obj) {
+                if (prop.startsWith('@')) {
+                    delete obj[prop];
+                } else if (typeof obj[prop] === 'object') {
+                    removePropertiesWithAtPrefix(obj[prop]);
+                }
+            }
+        }
+        removePropertiesWithAtPrefix(responseData);
+
+        let responseObject: OAS.ResponseObject = {
             description: res.statusText,
             content: {
                 [res.content.mimeType]: {
@@ -325,7 +338,7 @@ export class AvantationAPI implements Avantation.InputConfig {
                 }
             }
         };
-        response[res.status] = responObject;
+        response[res.status] = responseObject;
         return response;
     }
 
@@ -386,24 +399,22 @@ export class AvantationAPI implements Avantation.InputConfig {
     onBuildComplete(): void {
         if (!this.template.tags) this.template.tags = [];
 
-        if (!this.disableTag)
+        if (!this.disableTag) {
             for (let tag in this.tagsHolder) {
                 this.template.tags.push({
                     name: tag
                 });
             }
+        } else {
+            delete this.template.tags;
+        }
 
         let that = this;
         this.template.info.title = that.title;
 
         this.template.servers.forEach(function (server: OAS.ServerObject) {
             server.url = server.url.replace('{host}', that.host);
-            if (server.variables && server.variables.basePath && typeof server.variables.basePath == 'object') {
-                server.variables.basePath.default = server.variables.basePath.default.replace(
-                    '{basePath}',
-                    that.basePath
-                );
-            }
+            server.url = server.url.replace('{basePath}', that.basePath);
         });
 
         if (this.template.components && this.template.components.securitySchemes) {
@@ -411,7 +422,6 @@ export class AvantationAPI implements Avantation.InputConfig {
                 this.template.components.securitySchemes[security] = this.securityHeaders[security];
             }
         }
-
         if (this.pipe) {
             console.log(this.json ? JSON.stringify(this.template) : YAML.stringify(this.template));
             return;
@@ -422,14 +432,14 @@ export class AvantationAPI implements Avantation.InputConfig {
                 this.out = this.out.replace('.yaml', '.json');
             }
             let _path = this.out ? path.resolve(this.out) : path.join(process.cwd(), 'openapi.json');
-            fs.writeFileSync(_path, JSON.stringify(this.template, null, 4));
+            fs.writeFileSync(_path, JSON.stringify(this.template, null, 2));
             this.afterBuildComplete();
             return;
         }
 
         fs.writeFileSync(
             this.out ? path.resolve(this.out) : path.join(process.cwd(), 'openapi.yaml'),
-            YAML.stringify(this.template)
+            YAML.stringify(this.template, 99, 2)
         );
         this.afterBuildComplete();
         return;

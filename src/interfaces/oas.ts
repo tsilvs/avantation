@@ -72,7 +72,7 @@ export interface ParameterObject {
     };
 }
 
-export interface ReponsesObject {
+export interface ResponseObject {
     description: string;
     headers?: any;
     content: ContentObject;
@@ -181,7 +181,7 @@ export interface SecuritySchemeObject {
 }
 
 export interface Response {
-    [statusCode: string]: ReponsesObject | ReferenceObject;
+    [statusCode: string]: ResponseObject | ReferenceObject;
 }
 
 export interface RedocLogo {

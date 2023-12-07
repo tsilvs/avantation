@@ -14,11 +14,11 @@
         "@oclif/plugin-help": "^2.1.4",
         "generate-schema": "^2.6.0",
         "httpsnippet": "^1.16.5",
-        "json2yaml": "^1.1.0",
         "shins": "^2.3.2-3",
         "tslib": "^1.9.3",
         "url-parse": "^1.4.4",
-        "widdershins": "^3.6.6"
+        "widdershins": "^3.6.6",
+        "yamljs": "^0.3.0"
     },
     "devDependencies": {
         "@types/chai": "^4.2.18",
