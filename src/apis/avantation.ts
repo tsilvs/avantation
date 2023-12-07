@@ -252,7 +252,7 @@ export class AvantationAPI implements Avantation.InputConfig {
                     let data = postData.text ? JSON.parse(postData.text) : {};
                     param.content[postData.mimeType] = {
                         schema: Util.generateSchema(data),
-                        example: data
+                        // example: data
                     };
                     break;
 
@@ -334,7 +334,7 @@ export class AvantationAPI implements Avantation.InputConfig {
             content: {
                 [res.content.mimeType]: {
                     schema: Util.generateSchema(responseData),
-                    example: responseData
+                    // example: responseData
                 }
             }
         };

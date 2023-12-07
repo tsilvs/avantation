@@ -1,7 +1,7 @@
 {
     "name": "@willh/avantation",
     "description": "Build OpenAPI 3.1 specification from HAR",
-    "version": "2.1.3",
+    "version": "2.1.4",
     "author": "Will 保哥 <doggy.huang@gmail.com>",
     "bin": {
         "avantation": "./bin/run"
@@ -58,7 +58,7 @@
     },
     "repository": "doggy8088/avantation",
     "scripts": {
-        "build": "tsc --build tsconfig.json",
+        "build": "npm run clean && tsc --build tsconfig.json",
         "clean": "rm -rf lib && tsc -b && tsc --build --clean",
         "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register/index.js 'test/**/*.ts'"
     },

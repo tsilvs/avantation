@@ -1,400 +1,191 @@
----
-  openapi: "3.0.0"
-  info:
-    version: "1.0"
-    title: "Avantation REST Template"
-    description: "TODO: Add Description"
-  servers:
-    -
-      url: "{scheme}://demo.avantation.in/{basePath}"
-      variables:
-        scheme:
-          enum:
-            - "https"
-            - "http"
-          default: "https"
-        basePath:
-          default: "api/v1"
-  tags:
-    -
-      name: "Auth"
-    -
-      name: "Todo"
-  components:
-    schemas:
-      ErrorModel:
-        type: "object"
-        properties:
-          code:
-            type: "string"
-    securitySchemes:
-      JWT:
-        description: "You can create a JSON Web Token (JWT) during auth.\nUsage format: `Bearer <JWT>`\n"
-        name: "Authorization"
-        type: "apiKey"
-        in: "header"
-  paths:
-    /login:
-      post:
-        security: []
-        tags:
-          - "Auth"
-        summary: "Login "
-        parameters: []
-        requestBody:
-          required: true
+openapi: 3.1.0
+info:
+  version: '1.0'
+  title: 'HAR to OpenAPI Spec Template'
+  description: 'TODO: Add Description'
+servers:
+  -
+    url: 'https://demo.avantation.in/api/v1'
+components:
+  schemas:
+    ErrorModel:
+      type: object
+      properties:
+        code:
+          type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
+          tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+          scopes:
+            User.Read: 'Read user profile'
+            Contacts.Read: 'Read contacts'
+paths:
+  /login:
+    post:
+      operationId: postLogin
+      summary: 'Login '
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                type: "object"
+                type: object
                 properties:
-                  email:
-                    type: "string"
-                  password:
-                    type: "string"
-              example:
-                email: "demo@avantation.in"
-                password: "EC84D5D857ABE"
-        responses:
-          200:
-            description: "OK"
-            content:
-              application/json:
-                schema:
-                  type: "object"
-                  properties:
-                    message:
-                      type: "string"
-                    token:
-                      type: "string"
-                example:
-                  message: "Welcome to demo of todo application."
-                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AYXZhbnRhdGlvbi5pbiIsImlhdCI6MTU1MTYyMDQ0Mn0.E6SPoRRF3lbPtyzkcLdwSQqVCMUM72-kGOdLoTlw2L4"
-          default:
-            description: "Unexpected error"
-            content:
-              application/json:
-                example:
-                  message: "Sorry unable to perform operation."
-        x-code-samples:
-          -
-            lang: "Curl"
-            source: "curl --request POST \\\n  --url https://demo.avantation.in/api/v1/login \\\n  --header 'content-type: application/json' \\\n  --data '{\\n\t\"email\":\"demo@avantation.in\",\\n\t\"password\": \"EC84D5D857ABE\"\\n}'"
-          -
-            lang: "JavaScript"
-            source: "var settings = {\n  \"async\": true,\n  \"crossDomain\": true,\n  \"url\": \"https://demo.avantation.in/api/v1/login\",\n  \"method\": \"POST\",\n  \"headers\": {\n    \"content-type\": \"application/json\"\n  },\n  \"processData\": false,\n  \"data\": \"{\\n\\t\\\"email\\\":\\\"demo@avantation.in\\\",\\n\\t\\\"password\\\": \\\"EC84D5D857ABE\\\"\\n}\"\n}\n\n$.ajax(settings).done(function (response) {\n  console.log(response);\n});"
-          -
-            lang: "OKHttp"
-            source: "OkHttpClient client = new OkHttpClient();\n\nMediaType mediaType = MediaType.parse(\"application/json\");\nRequestBody body = RequestBody.create(mediaType, \"{\\n\\t\\\"email\\\":\\\"demo@avantation.in\\\",\\n\\t\\\"password\\\": \\\"EC84D5D857ABE\\\"\\n}\");\nRequest request = new Request.Builder()\n  .url(\"https://demo.avantation.in/api/v1/login\")\n  .post(body)\n  .addHeader(\"content-type\", \"application/json\")\n  .build();\n\nResponse response = client.newCall(request).execute();"
-          -
-            lang: "Swift"
-            source: "import Foundation\n\nlet headers = [\"content-type\": \"application/json\"]\nlet parameters = [\n  \"email\": \"demo@avantation.in\",\n  \"password\": \"EC84D5D857ABE\"\n]\n\nlet postData = NSJSONSerialization.dataWithJSONObject(parameters, options: nil, error: nil)\n\nvar request = NSMutableURLRequest(URL: NSURL(string: \"https://demo.avantation.in/api/v1/login\")!,\n                                        cachePolicy: .UseProtocolCachePolicy,\n                                    timeoutInterval: 10.0)\nrequest.HTTPMethod = \"POST\"\nrequest.allHTTPHeaderFields = headers\nrequest.HTTPBody = postData\n\nlet session = NSURLSession.sharedSession()\nlet dataTask = session.dataTaskWithRequest(request, completionHandler: { (data, response, error) -> Void in\n  if (error != nil) {\n    println(error)\n  } else {\n    let httpResponse = response as? NSHTTPURLResponse\n    println(httpResponse)\n  }\n})\n\ndataTask.resume()"
-          -
-            lang: "Python"
-            source: "import requests\n\nurl = \"https://demo.avantation.in/api/v1/login\"\n\npayload = \"{\\n\\t\\\"email\\\":\\\"demo@avantation.in\\\",\\n\\t\\\"password\\\": \\\"EC84D5D857ABE\\\"\\n}\"\nheaders = {'content-type': 'application/json'}\n\nresponse = requests.request(\"POST\", url, data=payload, headers=headers)\n\nprint(response.text)"
-          -
-            lang: "NodeJS"
-            source: "var http = require(\"https\");\n\nvar options = {\n  \"method\": \"POST\",\n  \"hostname\": \"demo.avantation.in\",\n  \"port\": null,\n  \"path\": \"/api/v1/login\",\n  \"headers\": {\n    \"content-type\": \"application/json\"\n  }\n};\n\nvar req = http.request(options, function (res) {\n  var chunks = [];\n\n  res.on(\"data\", function (chunk) {\n    chunks.push(chunk);\n  });\n\n  res.on(\"end\", function () {\n    var body = Buffer.concat(chunks);\n    console.log(body.toString());\n  });\n});\n\nreq.write(JSON.stringify({ email: 'demo@avantation.in', password: 'EC84D5D857ABE' }));\nreq.end();"
-    /todos:
-      post:
-        security:
-          -
-            JWT: []
-        tags:
-          - "Todo"
-        summary: "Create new todo "
-        parameters: []
-        requestBody:
-          required: true
+                  message:
+                    type: string
+                  token:
+                    type: string
+  /todos:
+    post:
+      operationId: postTodos
+      summary: 'Create new todo '
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                todo:
+                  type: string
+                completed:
+                  type: boolean
+      responses:
+        '201':
+          description: Created
           content:
             application/json:
               schema:
-                type: "object"
+                type: object
                 properties:
                   todo:
-                    type: "string"
+                    type: string
                   completed:
-                    type: "boolean"
-              example:
-                todo: "Hello Wolrd"
-                completed: false
-        responses:
-          201:
-            description: "Created"
-            content:
-              application/json:
-                schema:
-                  type: "object"
-                  properties:
-                    todo:
-                      type: "string"
-                    completed:
-                      type: "boolean"
-                    id:
-                      type: "number"
-                example:
-                  todo: "Hello Wolrd"
-                  completed: false
-                  id: 1
-          default:
-            description: "Unexpected error"
-            content:
-              application/json:
-                example:
-                  message: "Sorry unable to perform operation."
-        x-code-samples:
-          -
-            lang: "Curl"
-            source: "curl --request POST \\\n  --url https://demo.avantation.in/api/v1/todos \\\n  --header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU' \\\n  --header 'content-type: application/json' \\\n  --data '{\\n\t\"todo\":\"Hello Wolrd\",\\n\t\"completed\": false\\n}'"
-          -
-            lang: "JavaScript"
-            source: "var settings = {\n  \"async\": true,\n  \"crossDomain\": true,\n  \"url\": \"https://demo.avantation.in/api/v1/todos\",\n  \"method\": \"POST\",\n  \"headers\": {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n  },\n  \"processData\": false,\n  \"data\": \"{\\n\\t\\\"todo\\\":\\\"Hello Wolrd\\\",\\n\\t\\\"completed\\\": false\\n}\"\n}\n\n$.ajax(settings).done(function (response) {\n  console.log(response);\n});"
-          -
-            lang: "OKHttp"
-            source: "OkHttpClient client = new OkHttpClient();\n\nMediaType mediaType = MediaType.parse(\"application/json\");\nRequestBody body = RequestBody.create(mediaType, \"{\\n\\t\\\"todo\\\":\\\"Hello Wolrd\\\",\\n\\t\\\"completed\\\": false\\n}\");\nRequest request = new Request.Builder()\n  .url(\"https://demo.avantation.in/api/v1/todos\")\n  .post(body)\n  .addHeader(\"content-type\", \"application/json\")\n  .addHeader(\"authorization\", \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\")\n  .build();\n\nResponse response = client.newCall(request).execute();"
-          -
-            lang: "Swift"
-            source: "import Foundation\n\nlet headers = [\n  \"content-type\": \"application/json\",\n  \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n]\nlet parameters = [\n  \"todo\": \"Hello Wolrd\",\n  \"completed\": false\n]\n\nlet postData = NSJSONSerialization.dataWithJSONObject(parameters, options: nil, error: nil)\n\nvar request = NSMutableURLRequest(URL: NSURL(string: \"https://demo.avantation.in/api/v1/todos\")!,\n                                        cachePolicy: .UseProtocolCachePolicy,\n                                    timeoutInterval: 10.0)\nrequest.HTTPMethod = \"POST\"\nrequest.allHTTPHeaderFields = headers\nrequest.HTTPBody = postData\n\nlet session = NSURLSession.sharedSession()\nlet dataTask = session.dataTaskWithRequest(request, completionHandler: { (data, response, error) -> Void in\n  if (error != nil) {\n    println(error)\n  } else {\n    let httpResponse = response as? NSHTTPURLResponse\n    println(httpResponse)\n  }\n})\n\ndataTask.resume()"
-          -
-            lang: "Python"
-            source: "import requests\n\nurl = \"https://demo.avantation.in/api/v1/todos\"\n\npayload = \"{\\n\\t\\\"todo\\\":\\\"Hello Wolrd\\\",\\n\\t\\\"completed\\\": false\\n}\"\nheaders = {\n    'content-type': \"application/json\",\n    'authorization': \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n    }\n\nresponse = requests.request(\"POST\", url, data=payload, headers=headers)\n\nprint(response.text)"
-          -
-            lang: "NodeJS"
-            source: "var http = require(\"https\");\n\nvar options = {\n  \"method\": \"POST\",\n  \"hostname\": \"demo.avantation.in\",\n  \"port\": null,\n  \"path\": \"/api/v1/todos\",\n  \"headers\": {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n  }\n};\n\nvar req = http.request(options, function (res) {\n  var chunks = [];\n\n  res.on(\"data\", function (chunk) {\n    chunks.push(chunk);\n  });\n\n  res.on(\"end\", function () {\n    var body = Buffer.concat(chunks);\n    console.log(body.toString());\n  });\n});\n\nreq.write(JSON.stringify({ todo: 'Hello Wolrd', completed: false }));\nreq.end();"
-      get:
-        security:
-          -
-            JWT: []
-        tags:
-          - "Todo"
-        summary: "(QUERY) Retrieve Todo based on Id  "
-        parameters:
-          -
-            in: "query"
-            name: "id_like"
-            schema:
-              type: "string"
-            required: true
-        responses:
-          200:
-            description: "OK"
-            content:
-              application/json:
-                schema:
-                  type: "array"
-                  items:
-                    type: "object"
-                    properties:
-                      todo:
-                        type: "string"
-                      completed:
-                        type: "boolean"
-                      id:
-                        type: "number"
-                example:
-                  -
-                    todo: "Hello Wolrd"
-                    completed: false
-                    id: 1
-          default:
-            description: "Unexpected error"
-            content:
-              application/json:
-                example:
-                  message: "Sorry unable to perform operation."
-        x-code-samples:
-          -
-            lang: "Curl"
-            source: "curl --request GET \\\n  --url 'https://demo.avantation.in/api/v1/todos?id_like=1' \\\n  --header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU'"
-          -
-            lang: "JavaScript"
-            source: "var settings = {\n  \"async\": true,\n  \"crossDomain\": true,\n  \"url\": \"https://demo.avantation.in/api/v1/todos?id_like=1\",\n  \"method\": \"GET\",\n  \"headers\": {\n    \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n  }\n}\n\n$.ajax(settings).done(function (response) {\n  console.log(response);\n});"
-          -
-            lang: "OKHttp"
-            source: "OkHttpClient client = new OkHttpClient();\n\nRequest request = new Request.Builder()\n  .url(\"https://demo.avantation.in/api/v1/todos?id_like=1\")\n  .get()\n  .addHeader(\"authorization\", \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\")\n  .build();\n\nResponse response = client.newCall(request).execute();"
-          -
-            lang: "Swift"
-            source: "import Foundation\n\nlet headers = [\"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"]\n\nlet postData = NSData(data: \"\".dataUsingEncoding(NSUTF8StringEncoding)!)\n\nvar request = NSMutableURLRequest(URL: NSURL(string: \"https://demo.avantation.in/api/v1/todos?id_like=1\")!,\n                                        cachePolicy: .UseProtocolCachePolicy,\n                                    timeoutInterval: 10.0)\nrequest.HTTPMethod = \"GET\"\nrequest.allHTTPHeaderFields = headers\nrequest.HTTPBody = postData\n\nlet session = NSURLSession.sharedSession()\nlet dataTask = session.dataTaskWithRequest(request, completionHandler: { (data, response, error) -> Void in\n  if (error != nil) {\n    println(error)\n  } else {\n    let httpResponse = response as? NSHTTPURLResponse\n    println(httpResponse)\n  }\n})\n\ndataTask.resume()"
-          -
-            lang: "Python"
-            source: "import requests\n\nurl = \"https://demo.avantation.in/api/v1/todos\"\n\npayload = \"\"\nheaders = {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU'}\n\nresponse = requests.request(\"GET\", url, data=payload, headers=headers)\n\nprint(response.text)"
-          -
-            lang: "NodeJS"
-            source: "var http = require(\"https\");\n\nvar options = {\n  \"method\": \"GET\",\n  \"hostname\": \"demo.avantation.in\",\n  \"port\": null,\n  \"path\": \"/api/v1/todos?id_like=1\",\n  \"headers\": {\n    \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n  }\n};\n\nvar req = http.request(options, function (res) {\n  var chunks = [];\n\n  res.on(\"data\", function (chunk) {\n    chunks.push(chunk);\n  });\n\n  res.on(\"end\", function () {\n    var body = Buffer.concat(chunks);\n    console.log(body.toString());\n  });\n});\n\nreq.end();"
-    /todos/{id}:
-      get:
-        security:
-          -
-            JWT: []
-        tags:
-          - "Todo"
-        summary: "(PATH) Retrieve Todo based on Id  "
-        parameters:
-          -
-            in: "path"
-            name: "id"
-            schema:
-              type: "string"
-            required: true
-        responses:
-          200:
-            description: "OK"
-            content:
-              application/json:
-                schema:
-                  type: "object"
-                  properties:
-                    todo:
-                      type: "string"
-                    completed:
-                      type: "boolean"
-                    id:
-                      type: "number"
-                example:
-                  todo: "Hello Wolrd"
-                  completed: false
-                  id: 1
-          default:
-            description: "Unexpected error"
-            content:
-              application/json:
-                example:
-                  message: "Sorry unable to perform operation."
-        x-code-samples:
-          -
-            lang: "Curl"
-            source: "curl --request GET \\\n  --url https://demo.avantation.in/api/v1/todos/1 \\\n  --header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU'"
-          -
-            lang: "JavaScript"
-            source: "var settings = {\n  \"async\": true,\n  \"crossDomain\": true,\n  \"url\": \"https://demo.avantation.in/api/v1/todos/1\",\n  \"method\": \"GET\",\n  \"headers\": {\n    \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n  }\n}\n\n$.ajax(settings).done(function (response) {\n  console.log(response);\n});"
-          -
-            lang: "OKHttp"
-            source: "OkHttpClient client = new OkHttpClient();\n\nRequest request = new Request.Builder()\n  .url(\"https://demo.avantation.in/api/v1/todos/1\")\n  .get()\n  .addHeader(\"authorization\", \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\")\n  .build();\n\nResponse response = client.newCall(request).execute();"
-          -
-            lang: "Swift"
-            source: "import Foundation\n\nlet headers = [\"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"]\n\nlet postData = NSData(data: \"\".dataUsingEncoding(NSUTF8StringEncoding)!)\n\nvar request = NSMutableURLRequest(URL: NSURL(string: \"https://demo.avantation.in/api/v1/todos/1\")!,\n                                        cachePolicy: .UseProtocolCachePolicy,\n                                    timeoutInterval: 10.0)\nrequest.HTTPMethod = \"GET\"\nrequest.allHTTPHeaderFields = headers\nrequest.HTTPBody = postData\n\nlet session = NSURLSession.sharedSession()\nlet dataTask = session.dataTaskWithRequest(request, completionHandler: { (data, response, error) -> Void in\n  if (error != nil) {\n    println(error)\n  } else {\n    let httpResponse = response as? NSHTTPURLResponse\n    println(httpResponse)\n  }\n})\n\ndataTask.resume()"
-          -
-            lang: "Python"
-            source: "import requests\n\nurl = \"https://demo.avantation.in/api/v1/todos/1\"\n\npayload = \"\"\nheaders = {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU'}\n\nresponse = requests.request(\"GET\", url, data=payload, headers=headers)\n\nprint(response.text)"
-          -
-            lang: "NodeJS"
-            source: "var http = require(\"https\");\n\nvar options = {\n  \"method\": \"GET\",\n  \"hostname\": \"demo.avantation.in\",\n  \"port\": null,\n  \"path\": \"/api/v1/todos/1\",\n  \"headers\": {\n    \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n  }\n};\n\nvar req = http.request(options, function (res) {\n  var chunks = [];\n\n  res.on(\"data\", function (chunk) {\n    chunks.push(chunk);\n  });\n\n  res.on(\"end\", function () {\n    var body = Buffer.concat(chunks);\n    console.log(body.toString());\n  });\n});\n\nreq.end();"
-      put:
-        security:
-          -
-            JWT: []
-        tags:
-          - "Todo"
-        summary: "Update Todo Based on Id "
-        parameters:
-          -
-            in: "path"
-            name: "id"
-            schema:
-              type: "string"
-            required: true
-        requestBody:
+                    type: boolean
+                  id:
+                    type: number
+    get:
+      operationId: getTodos
+      summary: '(QUERY) Retrieve Todo based on Id  '
+      parameters:
+        -
+          in: query
+          name: id_like
+          schema:
+            type: string
           required: true
+      requestBody: null
+      responses:
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                type: "object"
-                properties:
-                  todo:
-                    type: "string"
-                  completed:
-                    type: "boolean"
-              example:
-                todo: "Hello world"
-                completed: true
-        responses:
-          200:
-            description: "OK"
-            content:
-              application/json:
-                schema:
-                  type: "object"
+                type: array
+                items:
+                  type: object
                   properties:
                     todo:
-                      type: "string"
+                      type: string
                     completed:
-                      type: "boolean"
+                      type: boolean
                     id:
-                      type: "number"
-                example:
-                  todo: "Hello world"
-                  completed: true
-                  id: 1
-          default:
-            description: "Unexpected error"
-            content:
-              application/json:
-                example:
-                  message: "Sorry unable to perform operation."
-        x-code-samples:
-          -
-            lang: "Curl"
-            source: "curl --request PUT \\\n  --url https://demo.avantation.in/api/v1/todos/1 \\\n  --header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU' \\\n  --header 'content-type: application/json' \\\n  --data '{\\n\t\"todo\": \"Hello world\",\\n\t\"completed\": true\\n}'"
-          -
-            lang: "JavaScript"
-            source: "var settings = {\n  \"async\": true,\n  \"crossDomain\": true,\n  \"url\": \"https://demo.avantation.in/api/v1/todos/1\",\n  \"method\": \"PUT\",\n  \"headers\": {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n  },\n  \"processData\": false,\n  \"data\": \"{\\n\\t\\\"todo\\\": \\\"Hello world\\\",\\n\\t\\\"completed\\\": true\\n}\"\n}\n\n$.ajax(settings).done(function (response) {\n  console.log(response);\n});"
-          -
-            lang: "OKHttp"
-            source: "OkHttpClient client = new OkHttpClient();\n\nMediaType mediaType = MediaType.parse(\"application/json\");\nRequestBody body = RequestBody.create(mediaType, \"{\\n\\t\\\"todo\\\": \\\"Hello world\\\",\\n\\t\\\"completed\\\": true\\n}\");\nRequest request = new Request.Builder()\n  .url(\"https://demo.avantation.in/api/v1/todos/1\")\n  .put(body)\n  .addHeader(\"content-type\", \"application/json\")\n  .addHeader(\"authorization\", \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\")\n  .build();\n\nResponse response = client.newCall(request).execute();"
-          -
-            lang: "Swift"
-            source: "import Foundation\n\nlet headers = [\n  \"content-type\": \"application/json\",\n  \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n]\nlet parameters = [\n  \"todo\": \"Hello world\",\n  \"completed\": true\n]\n\nlet postData = NSJSONSerialization.dataWithJSONObject(parameters, options: nil, error: nil)\n\nvar request = NSMutableURLRequest(URL: NSURL(string: \"https://demo.avantation.in/api/v1/todos/1\")!,\n                                        cachePolicy: .UseProtocolCachePolicy,\n                                    timeoutInterval: 10.0)\nrequest.HTTPMethod = \"PUT\"\nrequest.allHTTPHeaderFields = headers\nrequest.HTTPBody = postData\n\nlet session = NSURLSession.sharedSession()\nlet dataTask = session.dataTaskWithRequest(request, completionHandler: { (data, response, error) -> Void in\n  if (error != nil) {\n    println(error)\n  } else {\n    let httpResponse = response as? NSHTTPURLResponse\n    println(httpResponse)\n  }\n})\n\ndataTask.resume()"
-          -
-            lang: "Python"
-            source: "import requests\n\nurl = \"https://demo.avantation.in/api/v1/todos/1\"\n\npayload = \"{\\n\\t\\\"todo\\\": \\\"Hello world\\\",\\n\\t\\\"completed\\\": true\\n}\"\nheaders = {\n    'content-type': \"application/json\",\n    'authorization': \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n    }\n\nresponse = requests.request(\"PUT\", url, data=payload, headers=headers)\n\nprint(response.text)"
-          -
-            lang: "NodeJS"
-            source: "var http = require(\"https\");\n\nvar options = {\n  \"method\": \"PUT\",\n  \"hostname\": \"demo.avantation.in\",\n  \"port\": null,\n  \"path\": \"/api/v1/todos/1\",\n  \"headers\": {\n    \"content-type\": \"application/json\",\n    \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n  }\n};\n\nvar req = http.request(options, function (res) {\n  var chunks = [];\n\n  res.on(\"data\", function (chunk) {\n    chunks.push(chunk);\n  });\n\n  res.on(\"end\", function () {\n    var body = Buffer.concat(chunks);\n    console.log(body.toString());\n  });\n});\n\nreq.write(JSON.stringify({ todo: 'Hello world', completed: true }));\nreq.end();"
-      delete:
-        security:
-          -
-            JWT: []
-        tags:
-          - "Todo"
-        summary: "Delete Todo based on Id "
-        parameters:
-          -
-            in: "path"
-            name: "id"
+                      type: number
+  '/todos/{id}':
+    get:
+      operationId: 'getTodos{id}'
+      summary: '(PATH) Retrieve Todo based on Id  '
+      parameters:
+        -
+          in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody: null
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  todo:
+                    type: string
+                  completed:
+                    type: boolean
+                  id:
+                    type: number
+    put:
+      operationId: 'putTodos{id}'
+      summary: 'Update Todo Based on Id '
+      parameters:
+        -
+          in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
             schema:
-              type: "string"
-            required: true
-        responses:
-          200:
-            description: "OK"
-            content:
-              application/json:
-                schema:
-                  type: "object"
-                  properties: {}
-                example: {}
-          default:
-            description: "Unexpected error"
-            content:
-              application/json:
-                example:
-                  message: "Sorry unable to perform operation."
-        x-code-samples:
-          -
-            lang: "Curl"
-            source: "curl --request DELETE \\\n  --url https://demo.avantation.in/api/v1/todos/1 \\\n  --header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU'"
-          -
-            lang: "JavaScript"
-            source: "var settings = {\n  \"async\": true,\n  \"crossDomain\": true,\n  \"url\": \"https://demo.avantation.in/api/v1/todos/1\",\n  \"method\": \"DELETE\",\n  \"headers\": {\n    \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n  }\n}\n\n$.ajax(settings).done(function (response) {\n  console.log(response);\n});"
-          -
-            lang: "OKHttp"
-            source: "OkHttpClient client = new OkHttpClient();\n\nRequest request = new Request.Builder()\n  .url(\"https://demo.avantation.in/api/v1/todos/1\")\n  .delete(null)\n  .addHeader(\"authorization\", \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\")\n  .build();\n\nResponse response = client.newCall(request).execute();"
-          -
-            lang: "Swift"
-            source: "import Foundation\n\nlet headers = [\"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"]\n\nlet postData = NSData(data: \"\".dataUsingEncoding(NSUTF8StringEncoding)!)\n\nvar request = NSMutableURLRequest(URL: NSURL(string: \"https://demo.avantation.in/api/v1/todos/1\")!,\n                                        cachePolicy: .UseProtocolCachePolicy,\n                                    timeoutInterval: 10.0)\nrequest.HTTPMethod = \"DELETE\"\nrequest.allHTTPHeaderFields = headers\nrequest.HTTPBody = postData\n\nlet session = NSURLSession.sharedSession()\nlet dataTask = session.dataTaskWithRequest(request, completionHandler: { (data, response, error) -> Void in\n  if (error != nil) {\n    println(error)\n  } else {\n    let httpResponse = response as? NSHTTPURLResponse\n    println(httpResponse)\n  }\n})\n\ndataTask.resume()"
-          -
-            lang: "Python"
-            source: "import requests\n\nurl = \"https://demo.avantation.in/api/v1/todos/1\"\n\npayload = \"\"\nheaders = {'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU'}\n\nresponse = requests.request(\"DELETE\", url, data=payload, headers=headers)\n\nprint(response.text)"
-          -
-            lang: "NodeJS"
-            source: "var http = require(\"https\");\n\nvar options = {\n  \"method\": \"DELETE\",\n  \"hostname\": \"demo.avantation.in\",\n  \"port\": null,\n  \"path\": \"/api/v1/todos/1\",\n  \"headers\": {\n    \"authorization\": \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AdGVzdGluZy5jb20iLCJpYXQiOjE1NDQ4NjQwNjZ9.w2cc4F0EY3I3xMAJWHLPZoxD4231MBAfInzPhwA-jZU\"\n  }\n};\n\nvar req = http.request(options, function (res) {\n  var chunks = [];\n\n  res.on(\"data\", function (chunk) {\n    chunks.push(chunk);\n  });\n\n  res.on(\"end\", function () {\n    var body = Buffer.concat(chunks);\n    console.log(body.toString());\n  });\n});\n\nreq.end();"
+              type: object
+              properties:
+                todo:
+                  type: string
+                completed:
+                  type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  todo:
+                    type: string
+                  completed:
+                    type: boolean
+                  id:
+                    type: number
+    delete:
+      operationId: 'deleteTodos{id}'
+      summary: 'Delete Todo based on Id '
+      parameters:
+        -
+          in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody: null
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
