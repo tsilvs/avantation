@@ -1,66 +1,70 @@
 {
-		"name": "@willh/avantation",
-		"description": "Build OpenAPI 3.1 specification from HAR",
-		"version": "2.1.4",
-		"author": "Will 保哥 <doggy.huang@gmail.com>",
-		"bin": {
-				"avantation": "./bin/run"
-		},
-		"man": "./man/avantation.1",
-		"bugs": "https://github.com/doggy8088/avantation/issues",
-		"dependencies": {
-				"@oclif/command": "^1.5.6",
-				"@oclif/config": "^1.9.0",
-				"@oclif/plugin-help": "^2.1.4",
-				"generate-schema": "^2.6.0",
-				"httpsnippet": "^1.16.5",
-				"shins": "^2.3.2-3",
-				"tslib": "^1.9.3",
-				"url-parse": "^1.4.4",
-				"widdershins": "^3.6.6",
-				"yamljs": "^0.3.0"
-		},
-		"devDependencies": {
-				"@types/chai": "^4.2.18",
-				"@types/mocha": "^5.2.7",
-				"@types/node": "^10.12.12",
-				"chai": "^4.3.4",
-				"mocha": "^9.0.1",
-				"ts-node": "^7.0.1",
-				"typescript": "^3.1.6"
-		},
-		"engines": {
-				"node": ">=10.14.2"
-		},
-		"files": [
-				"/bin",
-				"/lib",
-				"/man"
-		],
-		"homepage": "https://github.com/doggy8088/avantation",
-		"keywords": [
-				"oclif",
-				"avantation",
-				"documentation",
-				"REST",
-				"REST API'S",
-				"API",
-				"OpenAPI Specification",
-				"OAS",
-				"Swagger",
-				"HAR",
-				"OpenAPI"
-		],
-		"license": "MIT",
-		"main": "lib/index.js",
-		"oclif": {
-				"bin": "avantation"
-		},
-		"repository": "doggy8088/avantation",
-		"scripts": {
-				"build": "npm run clean && tsc --build tsconfig.json",
-				"clean": "rm -rf lib && tsc -b && tsc --build --clean",
-				"test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register/index.js 'test/**/*.ts'"
-		},
-		"types": "lib/index.d.ts"
+	"name": "@tsilvs/avantation",
+	"description": "Build OpenAPI 3.1 specification from HAR",
+	"version": "2.1.4",
+	"author": "Vsevolod Tsiliurik <tsilvs542@gmail.com>",
+	"bin": {
+		"avantation": "./bin/run"
+	},
+	"man": "./man/avantation.1",
+	"bugs": "https://github.com/tsilvs/avantation/issues",
+	"dependencies": {
+		"@oclif/command": "^1.5.6",
+		"@oclif/config": "^1.9.0",
+		"@oclif/plugin-help": "^6.0.22",
+		"generate-schema": "^2.6.0",
+		"httpsnippet": "^1.16.5",
+		"json2yaml": "^1.1.0",
+		"shins": "^2.3.2-3",
+		"tslib": "^1.9.3",
+		"url-parse": "^1.4.4",
+		"widdershins": "^3.6.6"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.2.18",
+		"@types/mocha": "^5.2.7",
+		"@types/node": "^10.12.12",
+		"@types/tmp": "^0.2.0",
+		"chai": "^4.3.4",
+		"mocha": "^9.0.1",
+		"tmp": "^0.2.1",
+		"ts-node": "^7.0.1",
+		"typescript": "^3.1.6"
+	},
+	"engines": {
+		"node": ">=10.14.2"
+	},
+	"files": [
+		"/bin",
+		"/lib",
+		"/man"
+	],
+	"homepage": "https://github.com/tsilvs/avantation",
+	"keywords": [
+		"oclif",
+		"avantation",
+		"documentation",
+		"REST",
+		"REST API'S",
+		"API",
+		"OpenAPI Specification",
+		"OAS",
+		"Swagger",
+		"HAR",
+		"OpenAPI"
+	],
+	"license": "MIT",
+	"main": "lib/index.js",
+	"oclif": {
+		"bin": "avantation"
+	},
+	"repository": "tsilvs/avantation",
+	"scripts": {
+		"build": "npm run clean && tsc --build tsconfig.json",
+		"prepare": "npm run build",
+		"clean": "rm -rf lib && tsc -b && tsc --build --clean",
+		"prepack": "rm -rf lib && tsc -b ",
+		"test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register/index.js 'test/**/*.ts'"
+	},
+	"types": "lib/index.d.ts"
 }
